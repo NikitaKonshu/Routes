@@ -240,20 +240,16 @@
     </div>
 
     <script>
-        // 1. БАЗА АВИАКОМПАНИЙ
-        // Сюда можно легко добавить любую авиакомпанию через код
+        // БАЗА АВИАКОМПАНИЙ
         const airlines = {
             DLH: { name: 'Lufthansa', color: '#05164D' },
             SWR: { name: 'Swiss Int. Airlines', color: '#C80000' },
             AUA: { name: 'Austrian Airlines', color: '#D40000' },
             BEL: { name: 'Brussels Airlines', color: '#1B1B82' },
-            EWG: { name: 'Eurowings', color: '#5B2149' },
-            // Пример добавления новой авиакомпании не из LH Group:
-            // AFR: { name: 'Air France', color: '#002157' },
-            // AEU: { name: 'Aurora', color: '#0055A4' }
+            EWG: { name: 'Eurowings', color: '#5B2149' }
         };
 
-        // 2. БАЗА НАПРАВЛЕНИЙ (ИКАО, время в пути, город, код авиакомпании)
+        // БАЗА НАПРАВЛЕНИЙ
         const flightRoutes = [
             { dep: 'EDDF', arr: 'KJFK', time: '08h 30m', cityArr: 'Нью-Йорк', cityDep: 'Франкфурт', airline: 'DLH' },
             { dep: 'EDDF', arr: 'UUDD', time: '03h 15m', cityArr: 'Москва', cityDep: 'Франкфурт', airline: 'DLH' },
@@ -268,9 +264,9 @@
         const grid = document.getElementById('flightsGrid');
         const input = document.getElementById('icaoInput');
 
-        // Функция рендера карточек
+        // Рендер карточек
         function renderFlights(flights) {
-            grid.innerHTML = ''; // Очищаем сетку
+            grid.innerHTML = '';
 
             if (flights.length === 0) {
                 grid.innerHTML = '<div class="no-results">Рейсы по данному ИКАО не найдены. Проверьте правильность ввода.</div>';
@@ -279,11 +275,9 @@
 
             flights.forEach((flight, index) => {
                 const airlineData = airlines[flight.airline];
-                
-                // Создаем элемент карточки
                 const card = document.createElement('div');
                 card.className = 'card';
-                card.style.animationDelay = `${index * 0.1}s`; // Плавное появление по очереди
+                card.style.animationDelay = `${index * 0.1}s`;
 
                 card.innerHTML = `
                     <div class="card-header" style="background-color: ${airlineData.color}">
@@ -306,38 +300,34 @@
             });
         }
 
-        // Функция поиска по ИКАО
+        // Поиск
         function searchFlights() {
             const query = input.value.trim().toUpperCase();
-            
             if (!query) {
                 renderFlights(flightRoutes);
                 return;
             }
-
             const filteredFlights = flightRoutes.filter(flight => 
                 flight.dep === query || flight.arr === query
             );
-
             renderFlights(filteredFlights);
         }
 
-        // Функция сброса фильтра
+        // Сброс
         function resetFlights() {
             input.value = '';
             renderFlights(flightRoutes);
         }
 
-        // Обработка нажатия Enter в поле ввода
+        // Enter в поле ввода
         input.addEventListener('keypress', function (e) {
             if (e.key === 'Enter') {
                 searchFlights();
             }
         });
 
-        // Первоначальная загрузка всех рейсов
+        // Запуск
         renderFlights(flightRoutes);
-
     </script>
 </body>
 </html>
