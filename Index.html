@@ -1,333 +1,426 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lufthansa Group | Рейсы и Направления</title>
-    <style>
-        :root {
-            --lh-blue: #05164D;
-            --lh-yellow: #FFB300;
-            --lh-light-grey: #F4F5F6;
-            --lh-dark-grey: #4A4A4A;
-            --white: #FFFFFF;
-        }
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>LuftGanza — Направления</title>
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-        }
+  <!-- Шрифты и базовые стили -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#f6f8fb;
+      --navy:#003366;
+      --accent:#ffcc00;
+      --muted:#6b7280;
+      --card:#ffffff;
+      --glass: rgba(255,255,255,0.6);
+      --radius:14px;
+      --shadow: 0 8px 30px rgba(2,6,23,0.08);
+      --glass-shadow: 0 6px 20px rgba(2,6,23,0.06);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial;
+      background: linear-gradient(180deg,var(--bg),#eef3fb 60%);
+      color:#0b1220;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      padding:32px;
+    }
 
-        body {
-            background-color: var(--lh-light-grey);
-            color: var(--lh-dark-grey);
-            line-height: 1.6;
-        }
+    /* Header */
+    header{
+      display:flex;
+      align-items:center;
+      gap:20px;
+      margin-bottom:28px;
+    }
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:12px;
+    }
+    .logo{
+      width:56px;
+      height:56px;
+      border-radius:12px;
+      background:linear-gradient(135deg,var(--navy),#0b4a7a);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      color:var(--accent);
+      font-weight:700;
+      font-size:20px;
+      box-shadow: var(--shadow);
+    }
+    h1{
+      margin:0;
+      font-size:20px;
+      color:var(--navy);
+      letter-spacing:0.2px;
+    }
+    p.lead{
+      margin:0;
+      color:var(--muted);
+      font-size:13px;
+    }
 
-        /* Навигация и Хедер */
-        header {
-            background-color: var(--lh-blue);
-            color: var(--white);
-            padding: 20px 40px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-        }
+    /* Controls */
+    .controls{
+      margin-top:18px;
+      display:flex;
+      gap:12px;
+      align-items:center;
+      flex-wrap:wrap;
+    }
+    .control{
+      background:var(--card);
+      padding:10px 14px;
+      border-radius:12px;
+      box-shadow:var(--glass-shadow);
+      display:flex;
+      gap:8px;
+      align-items:center;
+    }
+    .control input[type="text"]{
+      border:0;
+      outline:none;
+      font-size:14px;
+      width:220px;
+      background:transparent;
+    }
+    .btn{
+      background:var(--navy);
+      color:white;
+      border:0;
+      padding:10px 14px;
+      border-radius:10px;
+      cursor:pointer;
+      font-weight:600;
+      transition:transform .18s ease, box-shadow .18s ease;
+    }
+    .btn:hover{transform:translateY(-3px); box-shadow:0 10px 30px rgba(3,60,120,0.12)}
+    .btn.secondary{
+      background:transparent;
+      color:var(--navy);
+      border:1px solid rgba(3,60,120,0.08);
+    }
 
-        header h1 {
-            font-size: 24px;
-            font-weight: 300;
-            letter-spacing: 1px;
-        }
+    /* Toggles */
+    .toggles{display:flex;gap:10px;align-items:center}
+    .switch{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      font-size:13px;
+      color:var(--muted);
+    }
+    .switch input{accent-color:var(--navy)}
 
-        header h1 span {
-            color: var(--lh-yellow);
-            font-weight: bold;
-        }
+    /* Grid */
+    .grid{
+      margin-top:22px;
+      display:grid;
+      grid-template-columns:repeat(auto-fill,minmax(300px,1fr));
+      gap:18px;
+    }
 
-        /* Блок поиска по ИКАО */
-        .search-section {
-            background-color: var(--white);
-            padding: 40px;
-            text-align: center;
-            border-bottom: 2px solid var(--lh-yellow);
-        }
+    /* Card */
+    .card{
+      background:linear-gradient(180deg,var(--card),#fbfdff);
+      border-radius:var(--radius);
+      padding:18px;
+      box-shadow:var(--shadow);
+      transition:transform .22s cubic-bezier(.2,.9,.3,1), box-shadow .22s;
+      overflow:hidden;
+      position:relative;
+    }
+    .card:hover{transform:translateY(-8px); box-shadow:0 20px 50px rgba(2,6,23,0.12)}
+    .route{
+      display:flex;
+      gap:12px;
+      align-items:center;
+    }
+    .airport{
+      min-width:72px;
+      padding:10px;
+      border-radius:10px;
+      background:linear-gradient(180deg,#f7f9fc,#eef6ff);
+      text-align:center;
+      box-shadow:0 6px 18px rgba(3,60,120,0.04);
+    }
+    .icao{font-weight:700;color:var(--navy);font-size:16px}
+    .city{font-size:13px;color:var(--muted)}
+    .meta{
+      margin-left:auto;
+      text-align:right;
+    }
+    .airline{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      margin-top:12px;
+    }
+    .airline .badge{
+      background:var(--navy);
+      color:var(--accent);
+      padding:6px 10px;
+      border-radius:8px;
+      font-weight:700;
+      font-size:13px;
+    }
+    .flight-time{
+      color:var(--muted);
+      font-size:13px;
+    }
 
-        .search-section h2 {
-            margin-bottom: 20px;
-            color: var(--lh-blue);
-        }
+    /* Footer small */
+    .hint{
+      margin-top:18px;
+      color:var(--muted);
+      font-size:13px;
+    }
 
-        .search-box {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            max-width: 500px;
-            margin: 0 auto;
-        }
-
-        input[type="text"] {
-            padding: 15px 20px;
-            font-size: 16px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            width: 100%;
-            text-transform: uppercase;
-            outline: none;
-            transition: border-color 0.3s ease;
-        }
-
-        input[type="text"]:focus {
-            border-color: var(--lh-blue);
-        }
-
-        button {
-            background-color: var(--lh-blue);
-            color: var(--white);
-            border: none;
-            padding: 15px 30px;
-            font-size: 16px;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: background-color 0.3s ease, transform 0.1s ease;
-            font-weight: bold;
-        }
-
-        button:hover {
-            background-color: #0a247a;
-        }
-
-        button:active {
-            transform: scale(0.98);
-        }
-
-        /* Сетка карточек */
-        .container {
-            max-width: 1200px;
-            margin: 50px auto;
-            padding: 0 20px;
-        }
-
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-            gap: 30px;
-        }
-
-        /* Дизайн карточки направления */
-        .card {
-            background-color: var(--white);
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            opacity: 0;
-            transform: translateY(20px);
-            animation: fadeIn 0.6s forwards;
-            position: relative;
-        }
-
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
-        }
-
-        .card-header {
-            background-color: var(--lh-blue);
-            color: var(--white);
-            padding: 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .airline-badge {
-            font-size: 12px;
-            background-color: var(--lh-yellow);
-            color: var(--lh-blue);
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-weight: bold;
-            text-transform: uppercase;
-        }
-
-        .card-body {
-            padding: 25px 20px;
-        }
-
-        .route {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        .icao {
-            font-size: 28px;
-            font-weight: bold;
-            color: var(--lh-blue);
-        }
-
-        .plane-icon {
-            color: #ccc;
-            font-size: 24px;
-            position: relative;
-        }
-
-        .plane-icon::after {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: -30px;
-            right: -30px;
-            height: 2px;
-            background: repeating-linear-gradient(90deg, #ccc, #ccc 4px, transparent 4px, transparent 8px);
-            z-index: -1;
-        }
-
-        .details {
-            display: flex;
-            justify-content: space-between;
-            border-top: 1px solid #eee;
-            padding-top: 15px;
-            font-size: 14px;
-            color: #777;
-        }
-
-        .details strong {
-            color: var(--lh-dark-grey);
-        }
-
-        /* Анимация появления */
-        @keyframes fadeIn {
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .no-results {
-            text-align: center;
-            font-size: 18px;
-            color: var(--lh-dark-grey);
-            grid-column: 1 / -1;
-            padding: 40px;
-        }
-    </style>
+    /* Responsive */
+    @media (max-width:520px){
+      .controls{flex-direction:column;align-items:stretch}
+      .control input[type="text"]{width:100%}
+    }
+  </style>
 </head>
 <body>
+  <header>
+    <div class="brand">
+      <div class="logo" aria-hidden="true">LG</div>
+      <div>
+        <h1>LuftGanza — Направления</h1>
+        <p class="lead">Генератор направлений по ICAO, карточки рейсов и управление авиакомпаниями через код</p>
+      </div>
+    </div>
+  </header>
 
-    <header>
-        <h1>Lufthansa <span>Group</span></h1>
-        <div>Flight Network</div>
-    </header>
-
-    <section class="search-section">
-        <h2>Поиск направлений по ИКАО</h2>
-        <div class="search-box">
-            <input type="text" id="icaoInput" placeholder="Введите ICAO (например: EDDF, KJFK, UUDD)" maxlength="4">
-            <button onclick="searchFlights()">Найти рейсы</button>
-            <button onclick="resetFlights()" style="background-color: #777;">Все рейсы</button>
-        </div>
-    </section>
-
-    <div class="container">
-        <div class="grid" id="flightsGrid">
-            </div>
+  <section class="controls" aria-label="Управление">
+    <div class="control" title="Введите ICAO аэропорта отправления">
+      <label for="fromIcao" style="font-size:12px;color:var(--muted);margin-right:8px">Откуда (ICAO)</label>
+      <input id="fromIcao" placeholder="Например: EDDF" />
     </div>
 
-    <script>
-        // БАЗА АВИАКОМПАНИЙ
-        const airlines = {
-            DLH: { name: 'Lufthansa', color: '#05164D' },
-            SWR: { name: 'Swiss Int. Airlines', color: '#C80000' },
-            AUA: { name: 'Austrian Airlines', color: '#D40000' },
-            BEL: { name: 'Brussels Airlines', color: '#1B1B82' },
-            EWG: { name: 'Eurowings', color: '#5B2149' }
-        };
+    <div class="control" title="Введите ICAO аэропорта прибытия">
+      <label for="toIcao" style="font-size:12px;color:var(--muted);margin-right:8px">Куда (ICAO)</label>
+      <input id="toIcao" placeholder="Например: KJFK" />
+    </div>
 
-        // БАЗА НАПРАВЛЕНИЙ
-        const flightRoutes = [
-            { dep: 'EDDF', arr: 'KJFK', time: '08h 30m', cityArr: 'Нью-Йорк', cityDep: 'Франкфурт', airline: 'DLH' },
-            { dep: 'EDDF', arr: 'UUDD', time: '03h 15m', cityArr: 'Москва', cityDep: 'Франкфурт', airline: 'DLH' },
-            { dep: 'LSZH', arr: 'OMDB', time: '06h 15m', cityArr: 'Дубай', cityDep: 'Цюрих', airline: 'SWR' },
-            { dep: 'LOWW', arr: 'VHHH', time: '10h 20m', cityArr: 'Гонконг', cityDep: 'Вена', airline: 'AUA' },
-            { dep: 'EBBR', arr: 'GOOY', time: '06h 05m', cityArr: 'Дакар', cityDep: 'Брюссель', airline: 'BEL' },
-            { dep: 'EDDL', arr: 'LEPA', time: '02h 15m', cityArr: 'Пальма', cityDep: 'Дюссельдорф', airline: 'EWG' },
-            { dep: 'KJFK', arr: 'EDDF', time: '07h 45m', cityArr: 'Франкфурт', cityDep: 'Нью-Йорк', airline: 'DLH' },
-            { dep: 'LSZH', arr: 'EGLL', time: '01h 50m', cityArr: 'Лондон', cityDep: 'Цюрих', airline: 'SWR' }
-        ];
+    <button class="btn" id="genBtn">Сгенерировать направление</button>
 
-        const grid = document.getElementById('flightsGrid');
-        const input = document.getElementById('icaoInput');
+    <div class="toggles" style="margin-left:auto">
+      <label class="switch">
+        <input type="checkbox" id="hideLHGroup" />
+        <span>Отключить Lufthansa Group</span>
+      </label>
+      <button class="btn secondary" id="resetBtn">Сбросить</button>
+    </div>
+  </section>
 
-        // Рендер карточек
-        function renderFlights(flights) {
-            grid.innerHTML = '';
+  <main>
+    <div class="grid" id="routesGrid" aria-live="polite"></div>
 
-            if (flights.length === 0) {
-                grid.innerHTML = '<div class="no-results">Рейсы по данному ИКАО не найдены. Проверьте правильность ввода.</div>';
-                return;
-            }
+    <p class="hint">
+      <strong>Добавление авиакомпаний через код:</strong> откройте блок <code>airlines</code> внизу скрипта и добавьте объект {code, name, group}. Lufthansa Group помечены group: true.
+    </p>
+  </main>
 
-            flights.forEach((flight, index) => {
-                const airlineData = airlines[flight.airline];
-                const card = document.createElement('div');
-                card.className = 'card';
-                card.style.animationDelay = `${index * 0.1}s`;
+  <script>
+    /*************************************************************************
+     * Примерная база ICAO (можно расширять через код)
+     * Для реального использования замените или дополните данными аэропортов
+     * Формат: ICAO: { city, name, lat, lon }
+     *************************************************************************/
+    const airports = {
+      "EDDF": { city: "Frankfurt", name: "Frankfurt am Main", lat:50.0379, lon:8.5622 },
+      "EDDM": { city: "Munich", name: "Franz Josef Strauss", lat:48.3538, lon:11.7861 },
+      "LSZH": { city: "Zurich", name: "Zurich Airport", lat:47.4647, lon:8.5492 },
+      "LOWW": { city: "Vienna", name: "Vienna Intl", lat:48.1103, lon:16.5697 },
+      "EBBR": { city: "Brussels", name: "Brussels Airport", lat:50.9014, lon:4.4844 },
+      "KJFK": { city: "New York", name: "John F. Kennedy Intl", lat:40.6413, lon:-73.7781 },
+      "EGLL": { city: "London", name: "Heathrow", lat:51.4700, lon:-0.4543 },
+      "LFPG": { city: "Paris", name: "Charles de Gaulle", lat:49.0097, lon:2.5479 },
+      "RJTT": { city: "Tokyo", name: "Haneda", lat:35.5494, lon:139.7798 }
+    };
 
-                card.innerHTML = `
-                    <div class="card-header" style="background-color: ${airlineData.color}">
-                        <span>${flight.cityDep} ➔ ${flight.cityArr}</span>
-                        <span class="airline-badge" style="${flight.airline !== 'DLH' ? 'background-color: #FFF; color: #333;' : ''}">${airlineData.name}</span>
-                    </div>
-                    <div class="card-body">
-                        <div class="route">
-                            <div class="icao" title="Аэропорт вылета">${flight.dep}</div>
-                            <div class="plane-icon">✈</div>
-                            <div class="icao" title="Аэропорт прилета">${flight.arr}</div>
-                        </div>
-                        <div class="details">
-                            <div>Время в полете: <strong>${flight.time}</strong></div>
-                            <div>Рейс: <strong>${flight.airline}${Math.floor(Math.random() * 900) + 100}</strong></div>
-                        </div>
-                    </div>
-                `;
-                grid.appendChild(card);
-            });
-        }
+    /*************************************************************************
+     * Список авиакомпаний. Добавляйте новые авиакомпании через этот массив.
+     * Чтобы пометить авиакомпанию как входящую в Lufthansa Group, установите group: true
+     *
+     * Пример добавления:
+     * airlines.push({ code: "XY", name: "New Air", group: false });
+     *
+     * Пользователь просил: "добавление других авиакомпаний через код а не приложение"
+     *************************************************************************/
+    const airlines = [
+      { code: "LH", name: "Lufthansa", group: true, color: "#003366" },
+      { code: "OS", name: "Austrian Airlines", group: true, color: "#0b4a7a" },
+      { code: "LX", name: "SWISS", group: true, color: "#d40000" },
+      { code: "SN", name: "Brussels Airlines", group: true, color: "#003366" },
+      { code: "EW", name: "Eurowings", group: true, color: "#ff0066" },
+      { code: "UA", name: "United", group: false, color: "#1a73e8" },
+      { code: "AA", name: "American Airlines", group: false, color: "#b0b7bd" },
+      { code: "AF", name: "Air France", group: false, color: "#003366" }
+    ];
 
-        // Поиск
-        function searchFlights() {
-            const query = input.value.trim().toUpperCase();
-            if (!query) {
-                renderFlights(flightRoutes);
-                return;
-            }
-            const filteredFlights = flightRoutes.filter(flight => 
-                flight.dep === query || flight.arr === query
-            );
-            renderFlights(filteredFlights);
-        }
+    /*************************************************************************
+     * Утилиты: расстояние по большой окружности и расчет примерного времени
+     *************************************************************************/
+    function toRad(deg){ return deg * Math.PI / 180; }
+    function haversine(lat1, lon1, lat2, lon2){
+      const R = 6371; // km
+      const dLat = toRad(lat2 - lat1);
+      const dLon = toRad(lon2 - lon1);
+      const a = Math.sin(dLat/2)**2 + Math.cos(toRad(lat1))*Math.cos(toRad(lat2))*Math.sin(dLon/2)**2;
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+      return R * c;
+    }
+    function estimateFlightTimeKm(km){
+      // Примерная крейсерская скорость пассажирского самолета ~ 850 km/h
+      const speed = 850;
+      const hours = km / speed;
+      const hr = Math.floor(hours);
+      const min = Math.round((hours - hr) * 60);
+      return `${hr}ч ${min}м`;
+    }
 
-        // Сброс
-        function resetFlights() {
-            input.value = '';
-            renderFlights(flightRoutes);
-        }
+    /*************************************************************************
+     * Рендер карточки направления
+     *************************************************************************/
+    const grid = document.getElementById('routesGrid');
+    function renderRouteCard(route){
+      const card = document.createElement('article');
+      card.className = 'card';
+      card.innerHTML = `
+        <div class="route">
+          <div class="airport">
+            <div class="icao">${route.from}</div>
+            <div class="city">${route.fromCity}</div>
+          </div>
 
-        // Enter в поле ввода
-        input.addEventListener('keypress', function (e) {
-            if (e.key === 'Enter') {
-                searchFlights();
-            }
-        });
+          <div style="flex:1;padding:0 12px">
+            <div style="font-weight:700;color:var(--navy);font-size:15px">${route.fromName} → ${route.toName}</div>
+            <div style="color:var(--muted);font-size:13px;margin-top:6px">${route.distance.toFixed(0)} км • ${route.time}</div>
+          </div>
 
-        // Запуск
-        renderFlights(flightRoutes);
-    </script>
+          <div class="meta">
+            <div style="font-size:13px;color:var(--muted)">ICAO прибытия</div>
+            <div style="font-weight:700;color:var(--navy);font-size:16px">${route.to}</div>
+          </div>
+        </div>
+
+        <div class="airline" aria-hidden="false">
+          <div class="badge" style="background:${route.airline.color}">${route.airline.code}</div>
+          <div>
+            <div style="font-weight:700;color:#0b1220">${route.airline.name}</div>
+            <div class="flight-time">Время в полёте: ${route.time}</div>
+          </div>
+        </div>
+      `;
+      return card;
+    }
+
+    /*************************************************************************
+     * Генерация направления по ICAO
+     *************************************************************************/
+    function generateRoute(fromIcao, toIcao, airline){
+      const from = airports[fromIcao.toUpperCase()];
+      const to = airports[toIcao.toUpperCase()];
+      if(!from || !to) return null;
+      const dist = haversine(from.lat, from.lon, to.lat, to.lon);
+      const time = estimateFlightTimeKm(dist);
+      return {
+        from: fromIcao.toUpperCase(),
+        to: toIcao.toUpperCase(),
+        fromCity: from.city,
+        toCity: to.city,
+        fromName: from.name,
+        toName: to.name,
+        distance: dist,
+        time,
+        airline
+      };
+    }
+
+    /*************************************************************************
+     * UI: генерация и фильтрация
+     *************************************************************************/
+    const genBtn = document.getElementById('genBtn');
+    const fromInput = document.getElementById('fromIcao');
+    const toInput = document.getElementById('toIcao');
+    const hideLHGroup = document.getElementById('hideLHGroup');
+    const resetBtn = document.getElementById('resetBtn');
+
+    function refreshGrid(routes){
+      grid.innerHTML = '';
+      if(routes.length === 0){
+        const empty = document.createElement('div');
+        empty.className = 'card';
+        empty.innerHTML = '<div style="color:var(--muted)">Нет направлений. Введите корректные ICAO и нажмите «Сгенерировать направление».</div>';
+        grid.appendChild(empty);
+        return;
+      }
+      routes.forEach(r => grid.appendChild(renderRouteCard(r)));
+    }
+
+    // Генерация: для демонстрации создаём по всем авиакомпаниям (с учётом фильтра)
+    genBtn.addEventListener('click', () => {
+      const from = fromInput.value.trim().toUpperCase();
+      const to = toInput.value.trim().toUpperCase();
+      if(!from || !to){
+        alert('Введите оба ICAO: откуда и куда.');
+        return;
+      }
+      const hideGroup = hideLHGroup.checked;
+      const selectedAirlines = airlines.filter(a => !(hideGroup && a.group));
+      const routes = [];
+      selectedAirlines.forEach(al => {
+        const r = generateRoute(from, to, al);
+        if(r) routes.push(r);
+      });
+      refreshGrid(routes);
+    });
+
+    // Сброс
+    resetBtn.addEventListener('click', () => {
+      fromInput.value = '';
+      toInput.value = '';
+      hideLHGroup.checked = false;
+      grid.innerHTML = '';
+    });
+
+    // Пример: при загрузке показать несколько популярных направлений
+    document.addEventListener('DOMContentLoaded', () => {
+      const sample = [
+        generateRoute('EDDF','KJFK', airlines[0]),
+        generateRoute('EDDM','KJFK', airlines[5]),
+        generateRoute('LSZH','EGLL', airlines[2]),
+        generateRoute('LOWW','LFPG', airlines[3])
+      ].filter(Boolean);
+      refreshGrid(sample);
+    });
+
+    /*************************************************************************
+     * ВАЖНО: добавление авиакомпаний через код
+     *
+     * Чтобы добавить новую авиакомпанию, откройте этот файл и в массиве `airlines`
+     * добавьте объект вида:
+     *   { code: "XY", name: "Название Air", group: false, color: "#123456" }
+     *
+     * Если хотите, чтобы авиакомпания считалась частью Lufthansa Group,
+     * установите group: true — тогда переключатель "Отключить Lufthansa Group"
+     * будет скрывать её.
+     *
+     * Пример:
+     * airlines.push({ code: "NZ", name: "New Zealand Air", group: false, color: "#0a6" });
+     *************************************************************************/
+  </script>
 </body>
 </html>
