@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lufthansa Group | Рейсы и Направления</title>
+    <style>
+        :root {
+            --lh-blue: #05164D;
+            --lh-yellow: #FFB300;
+            --lh-light-grey: #F4F5F6;
+            --lh-dark-grey: #4A4A4A;
+            --white: #FFFFFF;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--lh-light-grey);
+            color: var(--lh-dark-grey);
+            line-height: 1.6;
+        }
+
+        /* Навигация и Хедер */
+        header {
+            background-color: var(--lh-blue);
+            color: var(--white);
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        header h1 {
+            font-size: 24px;
+            font-weight: 300;
+            letter-spacing: 1px;
+        }
+
+        header h1 span {
+            color: var(--lh-yellow);
+            font-weight: bold;
+        }
+
+        /* Блок поиска по ИКАО */
+        .search-section {
+            background-color: var(--white);
+            padding: 40px;
+            text-align: center;
+            border-bottom: 2px solid var(--lh-yellow);
+        }
+
+        .search-section h2 {
+            margin-bottom: 20px;
+            color: var(--lh-blue);
+        }
+
+        .search-box {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        input[type="text"] {
+            padding: 15px 20px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            width: 100%;
+            text-transform: uppercase;
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+
+        input[type="text"]:focus {
+            border-color: var(--lh-blue);
+        }
+
+        button {
+            background-color: var(--lh-blue);
+            color: var(--white);
+            border: none;
+            padding: 15px 30px;
+            font-size: 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.1s ease;
+            font-weight: bold;
+        }
+
+        button:hover {
+            background-color: #0a247a;
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+
+        /* Сетка карточек */
+        .container {
+            max-width: 1200px;
+            margin: 50px auto;
+            padding: 0 20px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 30px;
+        }
+
+        /* Дизайн карточки направления */
+        .card {
+            background-color: var(--white);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeIn 0.6s forwards;
+            position: relative;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+        }
+
+        .card-header {
+            background-color: var(--lh-blue);
+            color: var(--white);
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .airline-badge {
+            font-size: 12px;
+            background-color: var(--lh-yellow);
+            color: var(--lh-blue);
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .card-body {
+            padding: 25px 20px;
+        }
+
+        .route {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .icao {
+            font-size: 28px;
+            font-weight: bold;
+            color: var(--lh-blue);
+        }
+
+        .plane-icon {
+            color: #ccc;
+            font-size: 24px;
+            position: relative;
+        }
+
+        .plane-icon::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: -30px;
+            right: -30px;
+            height: 2px;
+            background: repeating-linear-gradient(90deg, #ccc, #ccc 4px, transparent 4px, transparent 8px);
+            z-index: -1;
+        }
+
+        .details {
+            display: flex;
+            justify-content: space-between;
+            border-top: 1px solid #eee;
+            padding-top: 15px;
+            font-size: 14px;
+            color: #777;
+        }
+
+        .details strong {
+            color: var(--lh-dark-grey);
+        }
+
+        /* Анимация появления */
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .no-results {
+            text-align: center;
+            font-size: 18px;
+            color: var(--lh-dark-grey);
+            grid-column: 1 / -1;
+            padding: 40px;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Lufthansa <span>Group</span></h1>
+        <div>Flight Network</div>
+    </header>
+
+    <section class="search-section">
+        <h2>Поиск направлений по ИКАО</h2>
+        <div class="search-box">
+            <input type="text" id="icaoInput" placeholder="Введите ICAO (например: EDDF, KJFK, UUDD)" maxlength="4">
+            <button onclick="searchFlights()">Найти рейсы</button>
+            <button onclick="resetFlights()" style="background-color: #777;">Все рейсы</button>
+        </div>
+    </section>
+
+    <div class="container">
+        <div class="grid" id="flightsGrid">
+            </div>
+    </div>
+
+    <script>
+        // 1. БАЗА АВИАКОМПАНИЙ
+        // Сюда можно легко добавить любую авиакомпанию через код
+        const airlines = {
+            DLH: { name: 'Lufthansa', color: '#05164D' },
+            SWR: { name: 'Swiss Int. Airlines', color: '#C80000' },
+            AUA: { name: 'Austrian Airlines', color: '#D40000' },
+            BEL: { name: 'Brussels Airlines', color: '#1B1B82' },
+            EWG: { name: 'Eurowings', color: '#5B2149' },
+            // Пример добавления новой авиакомпании не из LH Group:
+            // AFR: { name: 'Air France', color: '#002157' },
+            // AEU: { name: 'Aurora', color: '#0055A4' }
+        };
+
+        // 2. БАЗА НАПРАВЛЕНИЙ (ИКАО, время в пути, город, код авиакомпании)
+        const flightRoutes = [
+            { dep: 'EDDF', arr: 'KJFK', time: '08h 30m', cityArr: 'Нью-Йорк', cityDep: 'Франкфурт', airline: 'DLH' },
+            { dep: 'EDDF', arr: 'UUDD', time: '03h 15m', cityArr: 'Москва', cityDep: 'Франкфурт', airline: 'DLH' },
+            { dep: 'LSZH', arr: 'OMDB', time: '06h 15m', cityArr: 'Дубай', cityDep: 'Цюрих', airline: 'SWR' },
+            { dep: 'LOWW', arr: 'VHHH', time: '10h 20m', cityArr: 'Гонконг', cityDep: 'Вена', airline: 'AUA' },
+            { dep: 'EBBR', arr: 'GOOY', time: '06h 05m', cityArr: 'Дакар', cityDep: 'Брюссель', airline: 'BEL' },
+            { dep: 'EDDL', arr: 'LEPA', time: '02h 15m', cityArr: 'Пальма', cityDep: 'Дюссельдорф', airline: 'EWG' },
+            { dep: 'KJFK', arr: 'EDDF', time: '07h 45m', cityArr: 'Франкфурт', cityDep: 'Нью-Йорк', airline: 'DLH' },
+            { dep: 'LSZH', arr: 'EGLL', time: '01h 50m', cityArr: 'Лондон', cityDep: 'Цюрих', airline: 'SWR' }
+        ];
+
+        const grid = document.getElementById('flightsGrid');
+        const input = document.getElementById('icaoInput');
+
+        // Функция рендера карточек
+        function renderFlights(flights) {
+            grid.innerHTML = ''; // Очищаем сетку
+
+            if (flights.length === 0) {
+                grid.innerHTML = '<div class="no-results">Рейсы по данному ИКАО не найдены. Проверьте правильность ввода.</div>';
+                return;
+            }
+
+            flights.forEach((flight, index) => {
+                const airlineData = airlines[flight.airline];
+                
+                // Создаем элемент карточки
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.style.animationDelay = `${index * 0.1}s`; // Плавное появление по очереди
+
+                card.innerHTML = `
+                    <div class="card-header" style="background-color: ${airlineData.color}">
+                        <span>${flight.cityDep} ➔ ${flight.cityArr}</span>
+                        <span class="airline-badge" style="${flight.airline !== 'DLH' ? 'background-color: #FFF; color: #333;' : ''}">${airlineData.name}</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="route">
+                            <div class="icao" title="Аэропорт вылета">${flight.dep}</div>
+                            <div class="plane-icon">✈</div>
+                            <div class="icao" title="Аэропорт прилета">${flight.arr}</div>
+                        </div>
+                        <div class="details">
+                            <div>Время в полете: <strong>${flight.time}</strong></div>
+                            <div>Рейс: <strong>${flight.airline}${Math.floor(Math.random() * 900) + 100}</strong></div>
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        // Функция поиска по ИКАО
+        function searchFlights() {
+            const query = input.value.trim().toUpperCase();
+            
+            if (!query) {
+                renderFlights(flightRoutes);
+                return;
+            }
+
+            const filteredFlights = flightRoutes.filter(flight => 
+                flight.dep === query || flight.arr === query
+            );
+
+            renderFlights(filteredFlights);
+        }
+
+        // Функция сброса фильтра
+        function resetFlights() {
+            input.value = '';
+            renderFlights(flightRoutes);
+        }
+
+        // Обработка нажатия Enter в поле ввода
+        input.addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                searchFlights();
+            }
+        });
+
+        // Первоначальная загрузка всех рейсов
+        renderFlights(flightRoutes);
+
+    </script>
+</body>
+</html>
